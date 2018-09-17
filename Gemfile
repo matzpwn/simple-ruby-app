@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'rails', '~> 5.2.1'
+gem 'bootsnap', '~> 1.3.2'
+gem 'tzinfo-data', '~> 1.2018.5'
+gem 'listen', '~> 3.1.5'
+gem 'sqlite3'
