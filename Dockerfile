@@ -1,15 +1,19 @@
 FROM ubuntu:16.04
 
+RUN set -ex \
+    && apt-get update -y \
+    && apt-get install build-essential curl sudo vim -y \
+    && curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - \
+    && apt-get install nodejs -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && useradd ubuntu -m \
+    && echo 'ubuntu ALL=(root) NOPASSWD: ALL' >> /etc/sudoers
+
 COPY Gemfile /home/ubuntu/Gemfile
 COPY run.sh /home/ubuntu/run.sh
 
 RUN set -ex \
-    && apt-get update -y \
-    && apt-get install build-essential curl sudo -y \
-    && curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - \
-    && apt-get install nodejs -y \
-    && useradd ubuntu -m \
-    && echo 'ubuntu ALL=(root) NOPASSWD: ALL' >> /etc/sudoers \
     && chown ubuntu:ubuntu /home/ubuntu/run.sh \
     && chmod +x /home/ubuntu/run.sh \
     && su - ubuntu -c 'gpg --keyserver hkp://keys.gnupg.net \
@@ -23,11 +27,7 @@ RUN set -ex \
     && su - ubuntu -c 'rails new app --skip-gemfile' \
     && su - ubuntu -c 'mv ~/Gemfile ~/app/' \
     && su - ubuntu -c 'cd ~/app && bundle install' \
-    && su - ubuntu -c 'gem clean' \
-    && apt-get remove curl -y \
-    && apt-get purge curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && su - ubuntu -c 'gem clean'
 
 EXPOSE 3000
 
